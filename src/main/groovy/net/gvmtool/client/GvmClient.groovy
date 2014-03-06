@@ -11,7 +11,7 @@ class GvmClient {
         this.restClient = new RESTClient(apiUrl)
     }
 
-    List<String> getCandidates() {
+    List<String> getRemoteCandidates() {
         try {
             def csv = restClient.get(path: "/candidates").text
             return csv.tokenize(',')

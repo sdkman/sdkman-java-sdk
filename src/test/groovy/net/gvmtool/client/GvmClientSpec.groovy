@@ -18,7 +18,7 @@ class GvmClientSpec extends Specification {
         def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx".split(",")
 
         when:
-        List<String> results = gvmClient.getCandidates()
+        List<String> results = gvmClient.getRemoteCandidates()
 
         then:
         results.containsAll(candidates)
@@ -30,7 +30,7 @@ class GvmClientSpec extends Specification {
         gvmClient.restClient = mockRestClient
 
         when:
-        gvmClient.getCandidates()
+        gvmClient.getRemoteCandidates()
 
         then:
         mockRestClient.get(_) >> { throw new HTTPClientException("boom")}
