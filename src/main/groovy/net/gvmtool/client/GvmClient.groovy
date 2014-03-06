@@ -18,7 +18,6 @@ final class GvmClient {
     List<Candidate> getCandidates() {
         def candidates = []
         try {
-
             def csv = restClient.get(path: "/candidates").text
             csv.tokenize(',').each { candidates << new Candidate(name:it) }
 
@@ -47,6 +46,16 @@ final class GvmClient {
 
         } catch (HTTPClientException hce) {
             throw new GvmClientException("Error on validating candidate version.", hce)
+        }
+    }
+
+    Boolean isAlive() {
+        try {
+            def alive = restClient.get(path: "/alive").text
+            return alive == "OK" ? true : false
+
+        } catch (HTTPClientException hce) {
+            return false
         }
     }
 }

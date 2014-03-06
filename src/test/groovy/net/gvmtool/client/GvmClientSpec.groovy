@@ -13,6 +13,29 @@ class GvmClientSpec extends Specification {
         gvmClient = GvmClient.instance(api)
     }
 
+    void "should report alive when api is healthy"() {
+        when:
+        def alive = gvmClient.isAlive()
+
+        then:
+        alive
+    }
+
+    void "should report dead when api is unhealthy"() {
+        given:
+        def mockRestClient = Mock(RESTClient)
+        gvmClient.restClient = mockRestClient
+
+        when:
+        def alive = gvmClient.isAlive()
+
+        then:
+        mockRestClient.get(_) >> { throw new HTTPClientException("foof") }
+
+        and:
+        ! alive
+    }
+
     void "should retrieve a list of candidates"() {
         when:
         List<Candidate> results = gvmClient.getCandidates()
