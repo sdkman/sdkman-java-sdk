@@ -7,9 +7,10 @@ import wslite.rest.RESTClient
 class GvmClientSpec extends Specification {
 
     GvmClient gvmClient
+    String apiUrl
 
     void setup(){
-        def apiUrl = "http://dev.gvmtool.net"
+        apiUrl = "http://dev.gvmtool.net"
         gvmClient = new GvmClient(apiUrl)
     }
 
@@ -78,4 +79,25 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
+    void "should throw NullPointerException if null is given as gvmHome"() {
+        given:
+        String gvmHome = null
+
+        when:
+        new GvmClient(apiUrl, gvmHome)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    void "should throw AssertionError if bogus is given as gvmHome"() {
+        given:
+        String gvmHome = "/superroot"
+
+        when:
+        new GvmClient(apiUrl, gvmHome)
+
+        then:
+        thrown(AssertionError)
+    }
 }

@@ -6,9 +6,18 @@ import wslite.rest.RESTClient
 class GvmClient {
 
     RESTClient restClient
+    String gvmHome
 
     GvmClient(String apiUrl) {
+        this(apiUrl, System.getProperty('user.home') + '/.gvm')
+    }
+
+    GvmClient(String apiUrl, String gvmHome) {
+        Objects.requireNonNull(gvmHome, "gvmHome must not be null")
+        assert new File(gvmHome).isDirectory(): "Directory '$gvmHome' does not exist"
+
         this.restClient = new RESTClient(apiUrl)
+        this.gvmHome = gvmHome
     }
 
     List<String> getRemoteCandidates() {
