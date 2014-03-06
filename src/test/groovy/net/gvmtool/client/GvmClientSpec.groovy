@@ -39,16 +39,27 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
-    void "should retrieve all versions for existing candidate"() {
+    void "should retrieve all remote versions for existing candidate"() {
         given:
         def candidate = "groovy"
 
         when:
-        List<Version> versions = gvmClient.getVersionsFor(candidate)
+        List<String> versions = gvmClient.getRemoteVersionsFor(candidate)
 
         then:
-        versions.find { it.name == "2.2.1" }
-        versions.find { it.name == "2.1.9" }
+        versions.find { it == "2.2.1" }
+        versions.find { it == "2.1.9" }
+    }
+
+    void "should return an empty list for non existing candidate"() {
+        given:
+        def candidate = "dada3*"
+
+        when:
+        List<String> versions = gvmClient.getRemoteVersionsFor(candidate)
+
+        then:
+        versions.empty
     }
 
     void "should handle communication error on retrieving candidate versions"() {
@@ -58,7 +69,7 @@ class GvmClientSpec extends Specification {
         gvmClient.restClient = mockRestClient
 
         when:
-        gvmClient.getVersionsFor(candidate)
+        gvmClient.getRemoteVersionsFor(candidate)
 
         then:
         mockRestClient.get(_) >> { throw new HTTPClientException("boom")}

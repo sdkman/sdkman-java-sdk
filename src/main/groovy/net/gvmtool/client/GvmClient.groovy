@@ -21,16 +21,19 @@ class GvmClient {
         }
     }
 
-    List<Version> getVersionsFor(String candidate) {
-        def versions = []
+    List<String> getRemoteVersionsFor(String candidate) {
         try {
-            def csv = restClient.get(path: "/candidates/$candidate").text
-            csv.tokenize(',').each { versions << new Version(name:it) }
+              def csv = restClient.get(path: "/candidates/$candidate").text
+          if (csv == 'invalid') {
+              return []
+          }
+          else {
+              return csv.tokenize(',')
+          }
 
         } catch (HTTPClientException hce) {
             throw new GvmClientException("Error on retrieving versions.", hce)
         }
-        versions
     }
 
 
