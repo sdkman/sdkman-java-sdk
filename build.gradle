@@ -6,5 +6,7 @@ repositories {
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:2.2.2"
+    compile "com.github.groovy-wslite:groovy-wslite:0.8.0"
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+    testCompile "cglib:cglib-nodep:3.1"
 }
