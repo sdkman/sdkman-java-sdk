@@ -58,4 +58,14 @@ final class GvmClient {
             return false
         }
     }
+
+    Version getDefaultVersionFor(String candidate) {
+        try {
+            def defaultVersion = restClient.get(path: "/candidates/$candidate/default").text
+            new Version(name: defaultVersion)
+
+        } catch (HTTPClientException hce) {
+            throw new GvmClientException(hce)
+        }
+    }
 }

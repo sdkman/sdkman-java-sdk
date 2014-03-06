@@ -88,6 +88,33 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
+    void "should get default version for a candidate"() {
+        given:
+        def candidate = "lazybones"
+
+        when:
+        def defaultVersion = gvmClient.getDefaultVersionFor(candidate)
+
+        then:
+        defaultVersion.name == "0.6"
+    }
+
+    void "should handle communication error on retrieving default version"() {
+        given:
+        def candidate = "lazybones"
+        def mockRestClient = Mock(RESTClient)
+        gvmClient.restClient = mockRestClient
+
+        when:
+        def defaultVersion = gvmClient.getDefaultVersionFor(candidate)
+
+        then:
+        mockRestClient.get(_) >> { throw new HTTPClientException("fazl") }
+
+        and:
+        thrown(GvmClientException)
+    }
+
     void "should validate a valid candidate version"() {
         given:
         def candidate = "groovy"
