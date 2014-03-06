@@ -15,7 +15,7 @@ final class GvmClient {
         new GvmClient(restClient: new RESTClient(apiUrl))
     }
 
-    List<Candidate> getCandidates() {
+    List<Candidate> getCandidates() throws GvmClientException {
         def candidates = []
         try {
             def csv = restClient.get(path: "/candidates").text
@@ -27,7 +27,7 @@ final class GvmClient {
         candidates
     }
 
-    List<Version> getVersionsFor(String candidate) {
+    List<Version> getVersionsFor(String candidate) throws GvmClientException {
         def versions = []
         try {
             def csv = restClient.get(path: "/candidates/$candidate").text
@@ -39,7 +39,7 @@ final class GvmClient {
         versions
     }
 
-    Boolean validCandidateVersion(String candidate, String version) {
+    Boolean validCandidateVersion(String candidate, String version) throws GvmClientException {
         try {
             def status = restClient.get(path: "/candidates/$candidate/$version").text
             status == "valid" ? true : false
@@ -49,7 +49,7 @@ final class GvmClient {
         }
     }
 
-    Boolean isAlive() {
+    Boolean isAlive() throws GvmClientException {
         try {
             def alive = restClient.get(path: "/alive").text
             return alive == "OK" ? true : false
@@ -59,7 +59,7 @@ final class GvmClient {
         }
     }
 
-    Version getDefaultVersionFor(String candidate) {
+    Version getDefaultVersionFor(String candidate) throws GvmClientException {
         try {
             def defaultVersion = restClient.get(path: "/candidates/$candidate/default").text
             new Version(name: defaultVersion)
