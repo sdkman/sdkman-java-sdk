@@ -13,7 +13,7 @@ class GvmClientSpec extends Specification {
         gvmClient = new GvmClient(apiUrl)
     }
 
-    void "should retrieve a list of candidate names"() {
+    void "should retrieve a list of remote candidate names"() {
         given:
         def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx".split(",")
 
@@ -24,7 +24,7 @@ class GvmClientSpec extends Specification {
         results.containsAll(candidates)
     }
 
-    void "should handle communication error on retrieving of candidates"() {
+    void "should handle communication error on retrieving of remote candidates"() {
         given:
         def mockRestClient = Mock(RESTClient)
         gvmClient.restClient = mockRestClient
@@ -39,7 +39,7 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
-    void "should retrieve all remote versions for existing candidate"() {
+    void "should retrieve all remote versions for existing remote candidate"() {
         given:
         def candidate = "groovy"
 
@@ -51,7 +51,7 @@ class GvmClientSpec extends Specification {
         versions.find { it == "2.1.9" }
     }
 
-    void "should return an empty list for non existing candidate"() {
+    void "should return an empty list for non existing remote candidate"() {
         given:
         def candidate = "dada3*"
 
@@ -62,7 +62,7 @@ class GvmClientSpec extends Specification {
         versions.empty
     }
 
-    void "should handle communication error on retrieving candidate versions"() {
+    void "should handle communication error on retrieving remote candidate versions"() {
         given:
         def candidate = "groovy"
         def mockRestClient = Mock(RESTClient)
