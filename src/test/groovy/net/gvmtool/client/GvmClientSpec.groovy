@@ -13,16 +13,15 @@ class GvmClientSpec extends Specification {
         gvmClient = new GvmClient(apiUrl)
     }
 
-    void "should retrieve a list of candidates"() {
+    void "should retrieve a list of candidate names"() {
         given:
-        def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx"
+        def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx".split(",")
 
         when:
-        List<Candidate> results = gvmClient.getCandidates()
+        List<String> results = gvmClient.getCandidates()
 
         then:
-        results.find { it.name == "groovy" }
-        results.find { it.name == "grails" }
+        results.containsAll(candidates)
     }
 
     void "should handle communication error on retrieving of candidates"() {
