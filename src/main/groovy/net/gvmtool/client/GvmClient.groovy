@@ -5,13 +5,13 @@ import wslite.rest.RESTClient
 
 final class GvmClient {
 
-    static PRODUCTION_API = "http://api.gvmtool.net"
+    static final DEFAULT_API = "http://api.gvmtool.net"
 
     RESTClient restClient
 
     private GvmClient(){}
 
-    static GvmClient instance(String apiUrl = PRODUCTION_API){
+    static GvmClient instance(String apiUrl = DEFAULT_API){
         new GvmClient(restClient: new RESTClient(apiUrl))
     }
 
