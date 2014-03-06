@@ -3,12 +3,16 @@ package net.gvmtool.client
 import wslite.http.HTTPClientException
 import wslite.rest.RESTClient
 
-class GvmClient {
+final class GvmClient {
+
+    static PRODUCTION_API = "http://api.gvmtool.net"
 
     RESTClient restClient
 
-    GvmClient(String apiUrl) {
-        this.restClient = new RESTClient(apiUrl)
+    private GvmClient(){}
+
+    static GvmClient instance(String apiUrl = PRODUCTION_API){
+        new GvmClient(restClient: new RESTClient(apiUrl))
     }
 
     List<Candidate> getCandidates() {

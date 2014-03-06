@@ -9,14 +9,11 @@ class GvmClientSpec extends Specification {
     GvmClient gvmClient
 
     void setup(){
-        def apiUrl = "http://dev.gvmtool.net"
-        gvmClient = new GvmClient(apiUrl)
+        def api = "http://dev.gvmtool.net"
+        gvmClient = GvmClient.instance(api)
     }
 
     void "should retrieve a list of candidates"() {
-        given:
-        def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx"
-
         when:
         List<Candidate> results = gvmClient.getCandidates()
 
