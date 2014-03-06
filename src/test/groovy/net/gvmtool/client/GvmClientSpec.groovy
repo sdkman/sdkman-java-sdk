@@ -65,4 +65,43 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
+    void "should validate a valid candidate version"() {
+        given:
+        def candidate = "groovy"
+        def version = "2.2.2"
+
+        when:
+        def valid = gvmClient.validCandidateVersion(candidate, version)
+
+        then:
+        valid
+    }
+
+    void "should validate an invalid candidate version"() {
+        given:
+        def candidate = "groovy"
+        def version = "9.9.9"
+
+        when:
+        def valid = gvmClient.validCandidateVersion(candidate, version)
+
+        then:
+        ! valid
+    }
+
+    void "should handle communication error on candidate version validation"() {
+        given:
+        def mockRestClient = Mock(RESTClient)
+        gvmClient.restClient = mockRestClient
+
+        when:
+        gvmClient.validCandidateVersion("", "")
+
+        then:
+        mockRestClient.get(_) >> { throw new HTTPClientException("pow!") }
+
+        and:
+        thrown(GvmClientException)
+    }
+
 }

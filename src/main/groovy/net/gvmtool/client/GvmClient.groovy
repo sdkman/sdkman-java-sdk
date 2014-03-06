@@ -39,4 +39,14 @@ final class GvmClient {
         }
         versions
     }
+
+    Boolean validCandidateVersion(String candidate, String version) {
+        try {
+            def status = restClient.get(path: "/candidates/$candidate/$version").text
+            status == "valid" ? true : false
+
+        } catch (HTTPClientException hce) {
+            throw new GvmClientException("Error on validating candidate version.", hce)
+        }
+    }
 }
