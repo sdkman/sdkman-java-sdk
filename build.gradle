@@ -42,7 +42,7 @@ task sourceJar(type: Jar) {
 
 publishing {
     publications {
-        plugin(MavenPublication) {
+        mavenGroovy(MavenPublication) {
             from components.java
 
             artifact sourceJar {
