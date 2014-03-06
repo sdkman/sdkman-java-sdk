@@ -7,31 +7,31 @@ import wslite.rest.RESTClient
 class GvmClientSpec extends Specification {
 
     GvmClient gvmClient
+    String apiUrl
 
     void setup(){
-        def apiUrl = "http://dev.gvmtool.net"
+        apiUrl = "http://dev.gvmtool.net"
         gvmClient = new GvmClient(apiUrl)
     }
 
-    void "should retrieve a list of candidates"() {
+    void "should retrieve a list of remote candidate names"() {
         given:
-        def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx"
+        def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx".split(",")
 
         when:
-        List<Candidate> results = gvmClient.getCandidates()
+        List<String> results = gvmClient.getRemoteCandidates()
 
         then:
-        results.find { it.name == "groovy" }
-        results.find { it.name == "grails" }
+        results.containsAll(candidates)
     }
 
-    void "should handle communication error on retrieving of candidates"() {
+    void "should handle communication error on retrieving of remote candidates"() {
         given:
         def mockRestClient = Mock(RESTClient)
         gvmClient.restClient = mockRestClient
 
         when:
-        gvmClient.getCandidates()
+        gvmClient.getRemoteCandidates()
 
         then:
         mockRestClient.get(_) >> { throw new HTTPClientException("boom")}
@@ -40,26 +40,37 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
-    void "should retrieve all versions for existing candidate"() {
+    void "should retrieve all remote versions for existing remote candidate"() {
         given:
         def candidate = "groovy"
 
         when:
-        List<Version> versions = gvmClient.getVersionsFor(candidate)
+        List<String> versions = gvmClient.getRemoteVersionsFor(candidate)
 
         then:
-        versions.find { it.name == "2.2.1" }
-        versions.find { it.name == "2.1.9" }
+        versions.find { it == "2.2.1" }
+        versions.find { it == "2.1.9" }
     }
 
-    void "should handle communication error on retrieving candidate versions"() {
+    void "should return an empty list for non existing remote candidate"() {
+        given:
+        def candidate = "dada3*"
+
+        when:
+        List<String> versions = gvmClient.getRemoteVersionsFor(candidate)
+
+        then:
+        versions.empty
+    }
+
+    void "should handle communication error on retrieving remote candidate versions"() {
         given:
         def candidate = "groovy"
         def mockRestClient = Mock(RESTClient)
         gvmClient.restClient = mockRestClient
 
         when:
-        gvmClient.getVersionsFor(candidate)
+        gvmClient.getRemoteVersionsFor(candidate)
 
         then:
         mockRestClient.get(_) >> { throw new HTTPClientException("boom")}
@@ -68,4 +79,25 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
+    void "should throw NullPointerException if null is given as gvmHome"() {
+        given:
+        String gvmHome = null
+
+        when:
+        new GvmClient(apiUrl, gvmHome)
+
+        then:
+        thrown(NullPointerException)
+    }
+
+    void "should throw AssertionError if bogus is given as gvmHome"() {
+        given:
+        String gvmHome = "/superroot"
+
+        when:
+        new GvmClient(apiUrl, gvmHome)
+
+        then:
+        thrown(AssertionError)
+    }
 }
