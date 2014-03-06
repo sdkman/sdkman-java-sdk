@@ -18,10 +18,11 @@ class GvmClientSpec extends Specification {
         def candidates = "gaiden,gradle,grails,griffon,groovy,groovyserv,lazybones,play,springboot,vertx"
 
         when:
-        def result = gvmClient.getCandidates()
+        List<Candidate> results = gvmClient.getCandidates()
 
         then:
-        result == candidates
+        results.find { it.name == "groovy" }
+        results.find { it.name == "grails" }
     }
 
     void "should handle communication error on retrieving of candidates"() {
@@ -41,13 +42,14 @@ class GvmClientSpec extends Specification {
 
     void "should retrieve all versions for existing candidate"() {
         given:
-        def candidate = "lazybones"
+        def candidate = "groovy"
 
         when:
-        def versions = gvmClient.getVersionsFor(candidate)
+        List<Version> versions = gvmClient.getVersionsFor(candidate)
 
         then:
-        versions == "0.2.1,0.3,0.4,0.5,0.6"
+        versions.find { it.name == "2.2.1" }
+        versions.find { it.name == "2.1.9" }
     }
 
     void "should handle communication error on retrieving candidate versions"() {

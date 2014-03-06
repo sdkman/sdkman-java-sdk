@@ -11,21 +11,28 @@ class GvmClient {
         this.restClient = new RESTClient(apiUrl)
     }
 
-    String getCandidates() {
+    List<Candidate> getCandidates() {
+        def candidates = []
         try {
-            restClient.get(path: "/candidates").text
+
+            def csv = restClient.get(path: "/candidates").text
+            csv.tokenize(',').each { candidates << new Candidate(name:it) }
 
         } catch(HTTPClientException hce) {
             throw new GvmClientException("Error on retrieving candidates.", hce)
         }
+        candidates
     }
 
-    String getVersionsFor(String candidate) {
+    List<Version> getVersionsFor(String candidate) {
+        def versions = []
         try {
-            restClient.get(path: "/candidates/$candidate").text
+            def csv = restClient.get(path: "/candidates/$candidate").text
+            csv.tokenize(',').each { versions << new Version(name:it) }
 
         } catch (HTTPClientException hce) {
             throw new GvmClientException("Error on retrieving versions.", hce)
         }
+        versions
     }
 }
