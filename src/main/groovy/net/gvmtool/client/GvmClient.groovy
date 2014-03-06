@@ -5,14 +5,10 @@ import wslite.rest.RESTClient
 
 class GvmClient {
 
-    private RESTClient restClient
+    RESTClient restClient
 
     GvmClient(String apiUrl) {
         this.restClient = new RESTClient(apiUrl)
-    }
-
-    GvmClient(RESTClient restClient) {
-        this.restClient = restClient
     }
 
     String getCandidates() {
