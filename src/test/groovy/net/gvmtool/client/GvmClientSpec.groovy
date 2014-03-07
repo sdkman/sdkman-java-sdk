@@ -154,4 +154,27 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
+    void "should get default app version "() {			
+        when:
+        def defaultVersion = gvmClient.getAppVersion()
+
+        then:
+        //TODO  any CI version to set?
+        defaultVersion.name == "1.0.0+build-223"
+    }
+
+    void "should handle communication error on retrieving app version"() {
+        given:
+        def mockRestClient = Mock(RESTClient)
+        gvmClient.restClient = mockRestClient
+
+        when:
+        def defaultVersion = gvmClient.getAppVersion()
+
+        then:
+        mockRestClient.get(_) >> { throw new HTTPClientException("D'oh!") }
+
+        and:
+        thrown(GvmClientException)
+    }
 }
