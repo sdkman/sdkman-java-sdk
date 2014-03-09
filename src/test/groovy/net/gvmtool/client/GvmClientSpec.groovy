@@ -159,8 +159,7 @@ class GvmClientSpec extends Specification {
         def defaultVersion = gvmClient.getAppVersion()
 
         then:
-        //TODO  any CI version to set?
-        defaultVersion.name == "1.0.0+build-223"
+        defaultVersion.name ==~ /^1\.0\.0\+build-\d{3}$/
     }
 
     void "should handle communication error on retrieving app version"() {
