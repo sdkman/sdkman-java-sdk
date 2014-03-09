@@ -57,4 +57,11 @@ final class GvmClient {
             throw new GvmClientException("Problems communicating with: $path", hce)
         }
     }
+    
+    Version getAppVersion() throws GvmClientException {
+        def  defaultVersion = call("/app/version")
+        new Version(name: defaultVersion)
+    }
+
+
 }
