@@ -64,6 +64,11 @@ final class GvmClient {
         new Version(name: defaultVersion)
     }
 
+    Version getAppVersion() throws GvmClientException {
+        def  defaultVersion = call("/app/version")
+        new Version(name: defaultVersion)
+    }
+
     private String call(String path) throws GvmClientException {
         try {
             restClient.get(path: path).text
@@ -72,11 +77,5 @@ final class GvmClient {
             throw new GvmClientException("Problems communicating with: $path", hce)
         }
     }
-    
-    Version getAppVersion() throws GvmClientException {
-        def  defaultVersion = call("/app/version")
-        new Version(name: defaultVersion)
-    }
-
 
 }
