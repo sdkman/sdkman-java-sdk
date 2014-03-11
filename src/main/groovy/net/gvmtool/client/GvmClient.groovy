@@ -69,6 +69,17 @@ final class GvmClient {
         new Version(name: defaultVersion)
     }
 
+    void downloadCandidate(String candidate, String version, Closure onInputStream) throws GvmClientException {
+        def downloadPath = "$DEFAULT_API/download/$candidate/$version"
+        try {
+            new URL(downloadPath).withInputStream { InputStream is ->
+                onInputStream.call(is)
+            }
+        } catch (IOException ioe) {
+            throw new GvmClientException("Problems communicating with: $downloadPath", ioe)
+        }
+    }
+
     private String call(String path) throws GvmClientException {
         try {
             restClient.get(path: path).text
@@ -77,5 +88,4 @@ final class GvmClient {
             throw new GvmClientException("Problems communicating with: $path", hce)
         }
     }
-
 }
