@@ -69,6 +69,15 @@ final class GvmClient {
         new Version(name: defaultVersion)
     }
 
+    InputStream downloadCandidate(String candidate, String version) throws GvmClientException {
+        URI uri = URI.create(restClient.url + "/download/$candidate/$version")
+        try {
+            uri.toURL().openStream()
+        } catch (IOException ioe) {
+            throw new GvmClientException("Problems downloading $candidate version $version from: ${uri.toString()}", ioe)
+        }
+    }
+
     private String call(String path) throws GvmClientException {
         try {
             restClient.get(path: path).text
@@ -77,5 +86,4 @@ final class GvmClient {
             throw new GvmClientException("Problems communicating with: $path", hce)
         }
     }
-
 }
