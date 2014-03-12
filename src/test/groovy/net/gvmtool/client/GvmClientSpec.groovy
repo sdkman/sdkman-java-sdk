@@ -191,4 +191,13 @@ class GvmClientSpec extends Specification {
         and:
         thrown(GvmClientException)
     }
+
+    void "Download a candidate"() {
+        setup:
+        def api = GvmClientSpec.getResource('/net/gvmtool/client').toString()
+        GvmClient resourceClient = GvmClient.instance(api)
+
+        expect:
+        resourceClient.downloadCandidate('candidate', 'version').text == 'Dr. Horribles Sing-Along Blog'
+    }
 }
