@@ -17,6 +17,7 @@ package net.gvmtool.client
 
 import wslite.http.HTTPClientException
 import wslite.rest.RESTClient
+import wslite.rest.Response
 
 final class GvmClient {
 
@@ -32,26 +33,26 @@ final class GvmClient {
 
     List<Candidate> getCandidates() throws GvmClientException {
         def candidates = []
-        def csv = call("/candidates")
+        def csv = call("/candidates").text
         csv.tokenize(',').each { candidates << new Candidate(name:it) }
         candidates
     }
 
     List<Version> getVersionsFor(String candidate) throws GvmClientException {
         def versions = []
-        def csv = call("/candidates/$candidate")
+        def csv = call("/candidates/$candidate").text
         csv.tokenize(',').each { versions << new Version(name:it) }
         versions
     }
 
     Boolean validCandidateVersion(String candidate, String version) throws GvmClientException {
-        def status = call("/candidates/$candidate/$version")
+        def status = call("/candidates/$candidate/$version").text
         status == "valid" ? true : false
     }
 
     Boolean isAlive() throws GvmClientException {
         try {
-            def alive = call("/alive")
+            def alive = call("/alive").text
             return alive == "OK" ? true : false
 
         } catch (GvmClientException gce) {
@@ -60,27 +61,23 @@ final class GvmClient {
     }
 
     Version getDefaultVersionFor(String candidate) throws GvmClientException {
-        def defaultVersion = call("/candidates/$candidate/default")
+        def defaultVersion = call("/candidates/$candidate/default").text
         new Version(name: defaultVersion)
     }
 
     Version getAppVersion() throws GvmClientException {
-        def  defaultVersion = call("/app/version")
+        def  defaultVersion = call("/app/version").text
         new Version(name: defaultVersion)
     }
 
-    InputStream downloadCandidate(String candidate, String version) throws GvmClientException {
-        URI uri = URI.create(restClient.url + "/download/$candidate/$version")
-        try {
-            uri.toURL().openStream()
-        } catch (IOException ioe) {
-            throw new GvmClientException("Problems downloading $candidate version $version from: ${uri.toString()}", ioe)
-        }
+    URL getDownloadURL(String candidate, String version){
+        def location = call("/download/$candidate/$version").response.headers['Location']
+        return new URL(location)
     }
 
-    private String call(String path) throws GvmClientException {
+    private Response call(String path) throws GvmClientException {
         try {
-            restClient.get(path: path).text
+            restClient.get(path: path)
 
         } catch (HTTPClientException hce) {
             throw new GvmClientException("Problems communicating with: $path", hce)

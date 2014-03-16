@@ -17,7 +17,9 @@ package net.gvmtool.client
 
 import spock.lang.Specification
 import wslite.http.HTTPClientException
+import wslite.http.HTTPResponse
 import wslite.rest.RESTClient
+import wslite.rest.Response
 
 class GvmClientSpec extends Specification {
 
@@ -183,7 +185,7 @@ class GvmClientSpec extends Specification {
         gvmClient.restClient = mockRestClient
 
         when:
-        def defaultVersion = gvmClient.getAppVersion()
+        gvmClient.getAppVersion()
 
         then:
         mockRestClient.get(_) >> { throw new HTTPClientException("D'oh!") }
@@ -192,12 +194,44 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
-    void "Download a candidate"() {
-        setup:
-        def api = GvmClientSpec.getResource('/net/gvmtool/client').toString()
-        GvmClient resourceClient = GvmClient.instance(api)
+    void "should retrieve download url for a candidate version"() {
+        given:
+        def mockRestClient = Mock(RESTClient)
+        gvmClient.restClient = mockRestClient
+        def location = 'http://dl.bintray.com/pledbrook/lazybones-templates/lazybones-0.5.zip'
 
-        expect:
-        resourceClient.downloadCandidate('candidate', 'version').text == 'Dr. Horribles Sing-Along Blog'
+        def httpResponse = new HTTPResponse(headers: [Location: location])
+        def response = new Response(null, httpResponse)
+
+        and:
+        def candidate = 'lazybones'
+        def version = '0.5'
+
+        when:
+        URL url = gvmClient.getDownloadURL(candidate, version)
+
+        then:
+        1 * mockRestClient.get({ it.path == '/download/lazybones/0.5'}) >> response
+
+        and:
+        url instanceof URL
+        url.toString() == location
+    }
+
+    void "should handle communication error on candidate version download"() {
+        given:
+        def candidate = 'lazybones'
+        def version = '0.5'
+        def mockRestClient = Mock(RESTClient)
+        gvmClient.restClient = mockRestClient
+
+        when:
+        gvmClient.getDownloadURL(candidate, version)
+
+        then:
+        mockRestClient.get(_) >> { throw new HTTPClientException('blamo') }
+
+        and:
+        thrown GvmClientException
     }
 }
