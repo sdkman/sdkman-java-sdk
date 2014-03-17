@@ -71,8 +71,8 @@ final class GvmClient {
     }
 
     URL getDownloadURL(String candidate, String version){
-        def location = call("/download/$candidate/$version").response.headers['Location']
-        return new URL(location)
+        def response = call("/download/$candidate/$version").response
+        response.url
     }
 
     private Response call(String path) throws GvmClientException {

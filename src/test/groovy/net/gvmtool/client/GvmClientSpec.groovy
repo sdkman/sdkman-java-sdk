@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 package net.gvmtool.client
-
 import spock.lang.Specification
 import wslite.http.HTTPClientException
-import wslite.http.HTTPResponse
 import wslite.rest.RESTClient
-import wslite.rest.Response
 
 class GvmClientSpec extends Specification {
 
@@ -196,26 +193,15 @@ class GvmClientSpec extends Specification {
 
     void "should retrieve download url for a candidate version"() {
         given:
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
-        def location = 'http://dl.bintray.com/pledbrook/lazybones-templates/lazybones-0.5.zip'
-
-        def httpResponse = new HTTPResponse(headers: [Location: location])
-        def response = new Response(null, httpResponse)
-
-        and:
-        def candidate = 'lazybones'
-        def version = '0.5'
+        def candidate = 'groovy'
+        def version = '2.2.2'
 
         when:
         URL url = gvmClient.getDownloadURL(candidate, version)
 
         then:
-        1 * mockRestClient.get({ it.path == '/download/lazybones/0.5'}) >> response
-
-        and:
         url instanceof URL
-        url.toString() == location
+        url.toString() ==~ /((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\+\\u0024,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\\u0024,\w]+@)[A-Za-z0-9.-]+)((?:\\/[\+~%\\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
     }
 
     void "should handle communication error on candidate version download"() {
