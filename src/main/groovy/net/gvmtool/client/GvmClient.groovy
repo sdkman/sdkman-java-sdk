@@ -23,7 +23,7 @@ final class GvmClient {
 
     static final DEFAULT_API = "http://api.gvmtool.net"
 
-    RESTClient restClient
+    def restClient
 
     private GvmClient(){}
 
@@ -33,26 +33,26 @@ final class GvmClient {
 
     List<Candidate> getCandidates() throws GvmClientException {
         def candidates = []
-        def csv = call("/candidates").text
+        def csv = get("/candidates").text
         csv.tokenize(',').each { candidates << new Candidate(name:it) }
         candidates
     }
 
     List<Version> getVersionsFor(String candidate) throws GvmClientException {
         def versions = []
-        def csv = call("/candidates/$candidate").text
+        def csv = get("/candidates/$candidate").text
         csv.tokenize(',').each { versions << new Version(name:it) }
         versions
     }
 
     Boolean validCandidateVersion(String candidate, String version) throws GvmClientException {
-        def status = call("/candidates/$candidate/$version").text
+        def status = get("/candidates/$candidate/$version").text
         status == "valid" ? true : false
     }
 
     Boolean isAlive() throws GvmClientException {
         try {
-            def alive = call("/alive").text
+            def alive = get("/alive").text
             return alive == "OK" ? true : false
 
         } catch (GvmClientException gce) {
@@ -61,23 +61,23 @@ final class GvmClient {
     }
 
     Version getDefaultVersionFor(String candidate) throws GvmClientException {
-        def defaultVersion = call("/candidates/$candidate/default").text
+        def defaultVersion = get("/candidates/$candidate/default").text
         new Version(name: defaultVersion)
     }
 
     Version getAppVersion() throws GvmClientException {
-        def  defaultVersion = call("/app/version").text
+        def  defaultVersion = get("/app/version").text
         new Version(name: defaultVersion)
     }
 
     URL getDownloadURL(String candidate, String version){
-        def response = call("/download/$candidate/$version").response
-        response.url
+        def response = get("/download/$candidate/$version").response
+        new URL(response.headers['Location'])
     }
 
-    private Response call(String path) throws GvmClientException {
+    private Response get(String path) throws GvmClientException {
         try {
-            restClient.get(path: path)
+            restClient.get(path: path, followRedirects: true)
 
         } catch (HTTPClientException hce) {
             throw new GvmClientException("Problems communicating with: $path", hce)
