@@ -16,15 +16,20 @@
 package net.gvmtool.client
 import spock.lang.Specification
 import wslite.http.HTTPClientException
+import wslite.http.HTTPResponse
 import wslite.rest.RESTClient
+import wslite.rest.Response
 
 class GvmClientSpec extends Specification {
 
     GvmClient gvmClient
 
+    RESTClient mockRestClient = Mock()
+    Response mockResponse = Mock()
+
     void setup(){
-        def api = "http://dev.gvmtool.net"
-        gvmClient = GvmClient.instance(api)
+        gvmClient = GvmClient.instance()
+        gvmClient.restClient = mockRestClient
     }
 
     void "should report alive when api is healthy"() {
@@ -32,19 +37,19 @@ class GvmClientSpec extends Specification {
         def alive = gvmClient.isAlive()
 
         then:
+        1 * mockResponse.propertyMissing('text') >> "OK"
+        1 * mockRestClient.get({it.path == '/alive'}) >> mockResponse
+
+        and:
         alive
     }
 
     void "should report dead when api is unhealthy"() {
-        given:
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
-
         when:
         def alive = gvmClient.isAlive()
 
         then:
-        mockRestClient.get(_) >> { throw new HTTPClientException("foof") }
+        mockRestClient.get({it.path == '/alive'}) >> { throw new HTTPClientException("foof") }
 
         and:
         ! alive
@@ -55,15 +60,15 @@ class GvmClientSpec extends Specification {
         List<Candidate> results = gvmClient.getCandidates()
 
         then:
+        1 * mockResponse.propertyMissing('text') >> "grails,groovy"
+        1 * mockRestClient.get({it.path == '/candidates'}) >> mockResponse
+
+        and:
         results.find { it.name == "groovy" }
         results.find { it.name == "grails" }
     }
 
     void "should handle communication error on retrieving of candidates"() {
-        given:
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
-
         when:
         gvmClient.getCandidates()
 
@@ -82,6 +87,9 @@ class GvmClientSpec extends Specification {
         List<Version> versions = gvmClient.getVersionsFor(candidate)
 
         then:
+        1 * mockResponse.propertyMissing('text') >> "2.1.9,2.2.1"
+        1 * mockRestClient.get({it.path == "/candidates/$candidate"}) >> mockResponse
+
         versions.find { it.name == "2.2.1" }
         versions.find { it.name == "2.1.9" }
     }
@@ -89,8 +97,6 @@ class GvmClientSpec extends Specification {
     void "should handle communication error on retrieving candidate versions"() {
         given:
         def candidate = "groovy"
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
 
         when:
         gvmClient.getVersionsFor(candidate)
@@ -110,20 +116,22 @@ class GvmClientSpec extends Specification {
         def defaultVersion = gvmClient.getDefaultVersionFor(candidate)
 
         then:
+        1 * mockResponse.propertyMissing('text') >> '0.6'
+        1 * mockRestClient.get({it.path == "/candidates/$candidate/default"}) >> mockResponse
+
+        and:
         defaultVersion.name == "0.6"
     }
 
     void "should handle communication error on retrieving default version"() {
         given:
         def candidate = "lazybones"
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
 
         when:
-        def defaultVersion = gvmClient.getDefaultVersionFor(candidate)
+        gvmClient.getDefaultVersionFor(candidate)
 
         then:
-        mockRestClient.get(_) >> { throw new HTTPClientException("fazl") }
+        1 * mockRestClient.get(_) >> { throw new HTTPClientException("fazl") }
 
         and:
         thrown(GvmClientException)
@@ -138,6 +146,10 @@ class GvmClientSpec extends Specification {
         def valid = gvmClient.validCandidateVersion(candidate, version)
 
         then:
+        1 * mockResponse.propertyMissing('text') >> 'valid'
+        1 * mockRestClient.get({it.path == "/candidates/$candidate/$version"}) >> mockResponse
+
+        and:
         valid
     }
 
@@ -150,14 +162,14 @@ class GvmClientSpec extends Specification {
         def valid = gvmClient.validCandidateVersion(candidate, version)
 
         then:
+        1 * mockResponse.propertyMissing('text') >> 'invalid'
+        1 * mockRestClient.get({it.path == "/candidates/$candidate/$version"}) >> mockResponse
+
+        and:
         ! valid
     }
 
     void "should handle communication error on candidate version validation"() {
-        given:
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
-
         when:
         gvmClient.validCandidateVersion("", "")
 
@@ -168,19 +180,22 @@ class GvmClientSpec extends Specification {
         thrown(GvmClientException)
     }
 
-    void "should get default app version "() {			
+    void "should get default app version "() {
+        given:
+        def version = "1.0.0"
+
         when:
         def defaultVersion = gvmClient.getAppVersion()
 
         then:
-        defaultVersion.name ==~ /^1\.0\.0\+build-\d{3}$/
+        1 * mockResponse.propertyMissing('text') >> version
+        1 * mockRestClient.get({it.path == '/app/version'}) >> mockResponse
+
+        and:
+        defaultVersion.name == version
     }
 
     void "should handle communication error on retrieving app version"() {
-        given:
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
-
         when:
         gvmClient.getAppVersion()
 
@@ -195,21 +210,25 @@ class GvmClientSpec extends Specification {
         given:
         def candidate = 'groovy'
         def version = '2.2.2'
+        def url = "http://pathtozip/archive.zip"
+        def response = Mock(HTTPResponse)
 
         when:
-        URL url = gvmClient.getDownloadURL(candidate, version)
+        URL responseUrl = gvmClient.getDownloadURL(candidate, version)
 
         then:
-        url instanceof URL
-        url.toString() ==~ /((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\+\\u0024,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\\u0024,\w]+@)[A-Za-z0-9.-]+)((?:\\/[\+~%\\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+        1 * response.getHeaders() >> [Location:url]
+        1 * mockResponse.getResponse() >> response
+        1 * mockRestClient.get({it.path == "/candidates/$candidate/$version/download" && it.followRedirects}) >> mockResponse
+
+        responseUrl instanceof URL
+        responseUrl.toString() == url
     }
 
     void "should handle communication error on candidate version download"() {
         given:
         def candidate = 'lazybones'
         def version = '0.5'
-        def mockRestClient = Mock(RESTClient)
-        gvmClient.restClient = mockRestClient
 
         when:
         gvmClient.getDownloadURL(candidate, version)

@@ -71,7 +71,7 @@ final class GvmClient {
     }
 
     URL getDownloadURL(String candidate, String version){
-        def response = get("/download/$candidate/$version").response
+        def response = get("/candidates/$candidate/$version/download").response
         new URL(response.headers['Location'])
     }
 
