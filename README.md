@@ -13,3 +13,9 @@ Using it is simple:
     versions.each { println it.name }
 
 Lots more features coming soon!!!
+
+### Distribution
+
+GVM-SDK is currently distributed through [Bintray](https://bintray.com)
+
+[ ![Download](https://api.bintray.com/packages/vermeulen-mp/gvmtool/gvm-sdk/images/download.png) ](https://bintray.com/vermeulen-mp/gvmtool/gvm-sdk/_latestVersion)
