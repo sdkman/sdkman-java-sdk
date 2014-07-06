@@ -13,8 +13,8 @@ public class Gvm {
         return new Install(new Object(), candidateName);
     }
 
-    public static Object uninstall(String candidateName) {
-        return new Object();
+    public static Uninstall uninstall(String candidateName) {
+        return new Uninstall(new Object(), candidateName);
     }
 
 }
