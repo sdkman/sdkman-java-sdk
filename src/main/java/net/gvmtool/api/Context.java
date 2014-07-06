@@ -13,19 +13,19 @@ import java.nio.file.Paths;
 public class Context {
 
     public Path gvmHomeDir;
-    public GvmHttpClient service;
 
     public static Context get() throws Exception {
         Context context = new Context();
         context.gvmHomeDir = Paths.get(System.getProperty("user.home"), ".gvm");
 
         if (Files.notExists(context.gvmHomeDir) || !Files.isDirectory(context.gvmHomeDir)) {
-            throw new Exception("Cannot find the GVM home directory at ${context.gvmHomeDir}");
+            throw new Exception("Cannot find the GVM home directory at " + context.gvmHomeDir);
         }
         if (!Files.isReadable(context.gvmHomeDir)) {
-            throw new Exception("Cannot read the GVM home directory at ${context.gvmHomeDir}");
+            throw new Exception("Cannot read the GVM home directory at " + context.gvmHomeDir);
         }
-        context.service = new GvmHttpClient();//need to import/implement the GVMHTTPclient in Java
+        //TODO: set client object
+//        context.service = new GvmHttpClient();//need to import/implement the GVMHTTPclient in Java
         return context;
     }
 
@@ -33,11 +33,11 @@ public class Context {
         return gvmHomeDir.resolve("archives");
     }
 
-    public Path tmp(){
+    public Path tmp() {
         return gvmHomeDir.resolve("tmp");
     }
 
-    public Path candidateDir(String candidateName){
+    public Path candidateDir(String candidateName) {
         return gvmHomeDir.resolve(candidateName);
     }
 
@@ -62,21 +62,18 @@ public class Context {
     }
 
     public Path candidateResolveCurrentDir(Path candidateDir) {
-        try{
+        try {
             return Files.readSymbolicLink(candidateCurrentVersion(candidateDir));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to resolve symbolic link for" + candidateDir.toString(), e);
         }
-        catch (IOException e){
-            throw new RuntimeException("Unable to resolve symbolyc link for"+candidateDir.toString(),e);
-        }
-
     }
+
     public Path candidateCurrentVersion(Path candidateDir) {
         return candidateVersionDir(candidateDir, "current");
     }
+
     public Path candidateArchive(String candidateName, String versionName) {
-        return archives().resolve("$candidateName-${versionName}.zip");
+        return archives().resolve(candidateName + "-" + versionName + ".zip");
     }
-
-
-
 }
