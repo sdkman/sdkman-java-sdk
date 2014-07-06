@@ -5,12 +5,12 @@ package net.gvmtool.api;
  */
 public class Gvm {
 
-    public static Object use(String candidateName) {
+    public static Use use(String candidateName) {
         return new Use(new Object(), candidateName);
     }
 
-    public static Object install(String candidateName) {
-        return new Object();
+    public static Install install(String candidateName) {
+        return new Install(new Object(), candidateName);
     }
 
     public static Object uninstall(String candidateName) {
