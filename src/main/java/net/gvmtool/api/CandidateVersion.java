@@ -7,11 +7,9 @@ import java.nio.file.Path;
  */
 public class CandidateVersion {
 
-    private Object context;
     private Path candidateVersionDir;
 
-    public CandidateVersion(Object context, Path candidateVersionDir) {
-        this.context = context;
+    public CandidateVersion(Path candidateVersionDir) {
         this.candidateVersionDir = candidateVersionDir;
     }
 

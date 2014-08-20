@@ -9,10 +9,10 @@ import java.nio.file.Paths;
  * @author Noam Y. Tenne
  */
 public class Install {
-    private Object context;
+    private Context context;
     private String candidateName;
 
-    public Install(Object context, String candidateName) {
+    public Install(Context context, String candidateName) {
         this.context = context;
         this.candidateName = candidateName;
     }
@@ -27,13 +27,10 @@ public class Install {
             return candidateVersion.dir();
         }
 
-        //TODO
-//        def versionDir = candidateInstaller.installCandidateVersion(context, name, version.name)
-        Path versionDir = Paths.get("context", candidateVersion.name());
+        CandidateInstaller candidateInstaller = new CandidateInstaller();
+        Path versionDir = candidateInstaller.installCandidateVersion(context, candidateName, version);
         if (options.isDefault()) {
-            //TODO
-//            def currentVersion = context.candidateCurrentVersion(candidateDir)
-            Path currentVersion = Paths.get("context", "current");
+            Path currentVersion = context.candidateCurrentVersion(candidateDir);
             try {
                 Files.deleteIfExists(currentVersion);
             } catch (IOException e) {

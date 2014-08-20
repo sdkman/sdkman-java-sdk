@@ -3,17 +3,16 @@ package net.gvmtool.api;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * @author Noam Y. Tenne
  */
 public class CandidateVersions {
 
-    private Object context;
+    private Context context;
     private Path candidateDir;
 
-    public CandidateVersions(Object context, Path candidateDir) {
+    public CandidateVersions(Context context, Path candidateDir) {
         this.context = context;
         this.candidateDir = candidateDir;
     }
@@ -23,19 +22,14 @@ public class CandidateVersions {
 
         if (options.isOffline()) {
             if (StringUtils.isNotBlank(versionName)) {
-//TODO
-//                if (context.candidateVersionInstalled(candidateDir, versionName)) {
-                if (true) {
+                if (context.candidateVersionInstalled(candidateDir, versionName)) {
                     return version(context, candidateDir, versionName);
                 } else {
                     throw new RuntimeException("Not available offline");
                 }
             } else {
-//TODO
-//                if (context.candidateHasCurrentVersion(candidateDir)) {
-                if (true) {
-//                    Path resolvedCurrentDir = context.candidateResolveCurrentDir(candidateDir)
-                    Path resolvedCurrentDir = Paths.get("context", "current");
+                if (context.candidateHasCurrentVersion(candidateDir)) {
+                    Path resolvedCurrentDir = context.candidateResolveCurrentDir(candidateDir);
                     return version(context, candidateDir, resolvedCurrentDir.getFileName().toString());
                 } else {
                     throw new RuntimeException("Not available offline");
@@ -43,37 +37,37 @@ public class CandidateVersions {
             }
         } else {
             if (StringUtils.isBlank(versionName)) {
-                //TODO
-                //    return version(context, candidateDir, context.service.defaultVersion(candidateName))
-                return version(context, candidateDir, "String");
+//                Version defaultVersion = null;
+//                try {
+//                    defaultVersion = context.client.getDefaultVersionFor(candidateName);
+//                } catch (GvmClientException e) {
+//                    throw new RuntimeException("Error getting default version for " + candidateName, e);
+//                }
+                return version(context, candidateDir, "default");
             } else {
-                boolean versionValid = true;
-
-//TODO
-//                boolean versionValid = context.service.validCandidateVersion(candidateName, versionName)
+                boolean versionValid = false;
+//                try {
+//                    versionValid = context.client.validCandidateVersion(candidateName, versionName);
+//                } catch (GvmClientException e) {
+//                    throw new RuntimeException("Error validating version " + versionName + " of " + candidateName, e);
+//                }
                 if (versionValid) {
                     return version(context, candidateDir, versionName);
                 }
-//TODO
-//                if (context.candidateVersionIsSymlink(candidateDir, versionName)) {
-                if (true) {
+                if (context.candidateVersionIsSymlink(candidateDir, versionName)) {
                     return version(context, candidateDir, versionName);
                 }
-//TODO
-//                if (context.candidateVersionIsDir(candidateDir, versionName)) {
-                if (true) {
+                if (context.candidateVersionIsDir(candidateDir, versionName)) {
                     return version(context, candidateDir, versionName);
                 }
 
-                throw new RuntimeException(versionName+" is not a valid "+candidateName+" version.");
+                throw new RuntimeException(versionName + " is not a valid " + candidateName + " version.");
             }
         }
     }
 
-    private CandidateVersion version(Object context, Path candidateDir, String versionName) {
-        //TODO
-//        Path candidateVersionDir = context.candidateVersionDir(candidateDir, name)
-        Path candidateVersionDir = Paths.get("context", versionName);
-        return new CandidateVersion(context, candidateVersionDir);
+    private CandidateVersion version(Context context, Path candidateDir, String versionName) {
+        Path candidateVersionDir = context.candidateVersionDir(candidateDir, versionName);
+        return new CandidateVersion(candidateVersionDir);
     }
 }

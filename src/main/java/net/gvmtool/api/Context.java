@@ -6,26 +6,24 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * TODO: Documentation
- *
  * @author Shay Bagants
  */
 public class Context {
 
     public Path gvmHomeDir;
+//    public GvmClient client;
 
-    public static Context get() throws Exception {
+    public static Context get() {
         Context context = new Context();
         context.gvmHomeDir = Paths.get(System.getProperty("user.home"), ".gvm");
 
         if (Files.notExists(context.gvmHomeDir) || !Files.isDirectory(context.gvmHomeDir)) {
-            throw new Exception("Cannot find the GVM home directory at " + context.gvmHomeDir);
+            throw new RuntimeException("Cannot find the GVM home directory at " + context.gvmHomeDir);
         }
         if (!Files.isReadable(context.gvmHomeDir)) {
-            throw new Exception("Cannot read the GVM home directory at " + context.gvmHomeDir);
+            throw new RuntimeException("Cannot read the GVM home directory at " + context.gvmHomeDir);
         }
-        //TODO: set client object
-//        context.service = new GvmHttpClient();//need to import/implement the GVMHTTPclient in Java
+//        context.client = GvmClient.instance();
         return context;
     }
 

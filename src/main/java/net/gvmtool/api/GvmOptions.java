@@ -2,13 +2,14 @@ package net.gvmtool.api;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Noam Y. Tenne
  */
 public class GvmOptions {
 
-    private final HashSet<GvmOption> options;
+    private final Set<GvmOption> options;
 
     public GvmOptions(GvmOption[] gvmOptions) {
         options = new HashSet<>();

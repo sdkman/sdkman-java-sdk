@@ -10,9 +10,9 @@ import java.nio.file.Paths;
  */
 public class Candidates {
 
-    private Object context;
+    private Context context;
 
-    public Candidates(Object context) {
+    public Candidates(Context context) {
         this.context = context;
     }
 
@@ -21,8 +21,6 @@ public class Candidates {
             throw new IllegalArgumentException("No candidate name was provided");
         }
 
-        //TODO: get candidate context
-//        return context.candidateDir(name);
-        return Paths.get("context", candidateName);
+        return context.candidateDir(candidateName);
     }
 }

@@ -9,10 +9,10 @@ import java.nio.file.Paths;
  */
 public class Use {
 
-    private Object context;
+    private Context context;
     private String candidateName;
 
-    public Use(Object context, String candidateName) {
+    public Use(Context context, String candidateName) {
         this.context = context;
         this.candidateName = candidateName;
     }
@@ -28,8 +28,8 @@ public class Use {
             return candidateVersion.dir();
         } else {
             if (options.isInstall()) {
-                //TODO
-//                candidateInstaller.installCandidateVersion(context, name, candidateVersion.name)
+                CandidateInstaller candidateInstaller = new CandidateInstaller();
+                candidateInstaller.installCandidateVersion(context, candidateName, version);
                 return Paths.get("context", candidateVersion.name());
             } else {
                 throw new RuntimeException(candidateName + " " + version + " is not installed");

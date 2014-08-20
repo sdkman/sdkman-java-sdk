@@ -6,15 +6,14 @@ package net.gvmtool.api;
 public class Gvm {
 
     public static Use use(String candidateName) {
-        return new Use(new Object(), candidateName);
+        return new Use(Context.get(), candidateName);
     }
 
     public static Install install(String candidateName) {
-        return new Install(new Object(), candidateName);
+        return new Install(Context.get(), candidateName);
     }
 
     public static Uninstall uninstall(String candidateName) {
-        return new Uninstall(new Object(), candidateName);
+        return new Uninstall(Context.get(), candidateName);
     }
-
 }
