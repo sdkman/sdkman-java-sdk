@@ -27,6 +27,7 @@ import java.nio.file.Path;
 public class Uninstall {
     private Context context;
     private String candidateName;
+    private Candidates candidates = new Candidates();
 
     public Uninstall(Context context, String candidateName) {
 
@@ -35,7 +36,7 @@ public class Uninstall {
     }
 
     public void version(String version) {
-        Path candidateDir = new Candidates(context).get(candidateName);
+        Path candidateDir = candidates.get(context, candidateName);
 
         if (StringUtils.isBlank(version)) {
             throw new IllegalArgumentException("No valid candidate version was provided.");

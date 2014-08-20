@@ -26,15 +26,7 @@ import java.nio.file.Path;
  */
 public class CandidateVersions {
 
-    private Context context;
-    private Path candidateDir;
-
-    public CandidateVersions(Context context, Path candidateDir) {
-        this.context = context;
-        this.candidateDir = candidateDir;
-    }
-
-    CandidateVersion determine(String versionName, GvmOptions options) {
+    CandidateVersion determine(Context context, Path candidateDir, String versionName, GvmOptions options) {
         String candidateName = candidateDir.getFileName().toString();
 
         if (options.isOffline()) {

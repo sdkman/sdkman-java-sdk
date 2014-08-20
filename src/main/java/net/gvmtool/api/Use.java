@@ -26,24 +26,26 @@ public class Use {
 
     private Context context;
     private String candidateName;
+    private Candidates candidates = new Candidates();
+    private CandidateVersions candidateVersions = new CandidateVersions();
+    private CandidateInstaller candidateInstaller = new CandidateInstaller();
 
     public Use(Context context, String candidateName) {
         this.context = context;
         this.candidateName = candidateName;
     }
 
-    public Path version(String version, GvmOption...gvmOptions) {
+    public Path version(String version, GvmOption... gvmOptions) {
         GvmOptions options = new GvmOptions(gvmOptions);
 
-        Path candidateDir = new Candidates(context).get(candidateName);
+        Path candidateDir = candidates.get(context, candidateName);
 
-        CandidateVersion candidateVersion = new CandidateVersions(context, candidateDir).determine(version, options);
+        CandidateVersion candidateVersion = candidateVersions.determine(context, candidateDir, version, options);
 
         if (Files.exists(candidateVersion.dir())) {
             return candidateVersion.dir();
         } else {
             if (options.isInstall()) {
-                CandidateInstaller candidateInstaller = new CandidateInstaller();
                 candidateInstaller.installCandidateVersion(context, candidateName, version);
                 return Paths.get("context", candidateVersion.name());
             } else {

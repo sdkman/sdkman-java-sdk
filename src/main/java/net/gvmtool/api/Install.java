@@ -26,6 +26,9 @@ import java.nio.file.Paths;
 public class Install {
     private Context context;
     private String candidateName;
+    private Candidates candidates = new Candidates();
+    private CandidateVersions candidateVersions = new CandidateVersions();
+    private CandidateInstaller candidateInstaller = new CandidateInstaller();
 
     public Install(Context context, String candidateName) {
         this.context = context;
@@ -33,16 +36,14 @@ public class Install {
     }
 
     public Path version(String version, GvmOption...gvmOptions) {
-        Path candidateDir = new Candidates(context).get(candidateName);
-
+        Path candidateDir = candidates.get(context, candidateName);
         GvmOptions options = new GvmOptions(gvmOptions);
-        CandidateVersion candidateVersion = new CandidateVersions(context, candidateDir).determine(version, options);
+        CandidateVersion candidateVersion = candidateVersions.determine(context, candidateDir, version, options);
 
         if (Files.exists(candidateVersion.dir())) {
             return candidateVersion.dir();
         }
 
-        CandidateInstaller candidateInstaller = new CandidateInstaller();
         Path versionDir = candidateInstaller.installCandidateVersion(context, candidateName, version);
         if (options.isDefault()) {
             Path currentVersion = context.candidateCurrentVersion(candidateDir);
