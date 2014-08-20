@@ -48,7 +48,7 @@ public class CandidateVersions {
             if (StringUtils.isBlank(versionName)) {
                 Version defaultVersion;
                 try {
-                    defaultVersion = context.client.getDefaultVersionFor(candidateName);
+                    defaultVersion = context.getClient().getDefaultVersionFor(candidateName);
                 } catch (GvmClientException e) {
                     throw new RuntimeException("Error getting default version for " + candidateName, e);
                 }
@@ -56,7 +56,7 @@ public class CandidateVersions {
             } else {
                 boolean versionValid;
                 try {
-                    versionValid = context.client.validCandidateVersion(candidateName, versionName);
+                    versionValid = context.getClient().validCandidateVersion(candidateName, versionName);
                 } catch (GvmClientException e) {
                     throw new RuntimeException("Error validating version " + versionName + " of " + candidateName, e);
                 }

@@ -15,7 +15,10 @@
  */
 package net.gvmtool.api;
 
+import net.gvmtool.client.GvmClientException;
+
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -90,12 +93,23 @@ public class CandidateInstaller {
         if (!Files.exists(archive)) {
             try {
                 Files.createDirectories(context.archives());
-                //TODO: download archive
-//                archive = context.service.downloadCandidate(context, name, version);
             } catch (IOException e) {
                 throw new RuntimeException("Cannot create directory " + archive.toString(), e);
             }
+            URL downloadURL;
+            try {
+                downloadURL = context.getClient().getDownloadURL(name, version);
+            } catch (GvmClientException e) {
+                throw new RuntimeException("Cannot resolve distribution URL for " + name + " " + version, e);
+            }
+
+            try (InputStream stream = downloadURL.openStream()) {
+                Files.copy(stream, archive, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ioe) {
+                throw new RuntimeException("Cannot resolve distribution URL from " + downloadURL, ioe);
+            }
         }
+
         return archive;
     }
 

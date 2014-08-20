@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 public class Context {
 
     public Path gvmHomeDir;
-    public GvmClient client;
+    private GvmClient client;
 
     public static Context get() {
         Context context = new Context();
@@ -90,5 +90,9 @@ public class Context {
 
     public Path candidateArchive(String candidateName, String versionName) {
         return archives().resolve(candidateName + "-" + versionName + ".zip");
+    }
+
+    public GvmClient getClient() {
+        return client;
     }
 }

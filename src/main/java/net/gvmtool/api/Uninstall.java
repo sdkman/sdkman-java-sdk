@@ -36,12 +36,11 @@ public class Uninstall {
     }
 
     public void version(String version) {
-        Path candidateDir = candidates.get(context, candidateName);
-
         if (StringUtils.isBlank(version)) {
             throw new IllegalArgumentException("No valid candidate version was provided.");
         }
-
+        
+        Path candidateDir = candidates.get(context, candidateName);
         if (context.candidateHasCurrentVersion(candidateDir)) {
             try {
                 Files.delete(context.candidateCurrentVersion(candidateDir));
