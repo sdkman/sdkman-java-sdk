@@ -40,7 +40,7 @@ public class Context {
         if (!Files.isReadable(context.gvmHomeDir)) {
             throw new RuntimeException("Cannot read the GVM home directory at " + context.gvmHomeDir);
         }
-//        context.client = GvmClient.instance();
+        context.client = GvmClient.instance();
         return context;
     }
 

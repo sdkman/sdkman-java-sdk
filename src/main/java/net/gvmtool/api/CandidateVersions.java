@@ -15,6 +15,8 @@
  */
 package net.gvmtool.api;
 
+import net.gvmtool.client.GvmClientException;
+import net.gvmtool.client.Version;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
@@ -52,20 +54,20 @@ public class CandidateVersions {
             }
         } else {
             if (StringUtils.isBlank(versionName)) {
-//                Version defaultVersion = null;
-//                try {
-//                    defaultVersion = context.client.getDefaultVersionFor(candidateName);
-//                } catch (GvmClientException e) {
-//                    throw new RuntimeException("Error getting default version for " + candidateName, e);
-//                }
-                return version(context, candidateDir, "default");
+                Version defaultVersion;
+                try {
+                    defaultVersion = context.client.getDefaultVersionFor(candidateName);
+                } catch (GvmClientException e) {
+                    throw new RuntimeException("Error getting default version for " + candidateName, e);
+                }
+                return version(context, candidateDir, defaultVersion.getName());
             } else {
-                boolean versionValid = false;
-//                try {
-//                    versionValid = context.client.validCandidateVersion(candidateName, versionName);
-//                } catch (GvmClientException e) {
-//                    throw new RuntimeException("Error validating version " + versionName + " of " + candidateName, e);
-//                }
+                boolean versionValid;
+                try {
+                    versionValid = context.client.validCandidateVersion(candidateName, versionName);
+                } catch (GvmClientException e) {
+                    throw new RuntimeException("Error validating version " + versionName + " of " + candidateName, e);
+                }
                 if (versionValid) {
                     return version(context, candidateDir, versionName);
                 }

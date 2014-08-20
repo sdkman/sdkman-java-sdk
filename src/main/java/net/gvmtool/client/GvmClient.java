@@ -15,10 +15,8 @@
  */
 package net.gvmtool.client;
 
-import wslite.http.HTTPClientException;
 import wslite.http.HTTPResponse;
 import wslite.rest.RESTClient;
-import wslite.rest.RESTClientException;
 import wslite.rest.Response;
 
 import java.net.MalformedURLException;
@@ -40,17 +38,17 @@ public class GvmClient {
     private GvmClient() {
     }
 
-    static GvmClient instance() {
+    public static GvmClient instance() {
         return instance(DEFAULT_API);
     }
 
-    static GvmClient instance(String apiUrl) {
+    public static GvmClient instance(String apiUrl) {
         GvmClient gvmClient = new GvmClient();
         gvmClient.restClient = new RESTClient(apiUrl);
         return gvmClient;
     }
 
-    List<Candidate> getCandidates() throws GvmClientException {
+    public List<Candidate> getCandidates() throws GvmClientException {
         List<Candidate> candidates = new ArrayList<>();
         String csv = getText("/candidates");
         String[] splitCsv = csv.split(",");
@@ -60,7 +58,7 @@ public class GvmClient {
         return candidates;
     }
 
-    List<Version> getVersionsFor(String candidate) throws GvmClientException {
+    public List<Version> getVersionsFor(String candidate) throws GvmClientException {
         List<Version> versions = new ArrayList<>();
         String csv = getText("/candidates/" + candidate);
         String[] splitCsv = csv.split(",");
@@ -70,12 +68,12 @@ public class GvmClient {
         return versions;
     }
 
-    Boolean validCandidateVersion(String candidate, String version) throws GvmClientException {
+    public Boolean validCandidateVersion(String candidate, String version) throws GvmClientException {
         String status = getText("/candidates/" + candidate + "/" + version);
         return "valid".equals(status);
     }
 
-    Boolean isAlive() throws GvmClientException {
+    public Boolean isAlive() throws GvmClientException {
         try {
             String alive = getText("/alive");
             return "OK".equals(alive);
@@ -85,17 +83,17 @@ public class GvmClient {
         }
     }
 
-    Version getDefaultVersionFor(String candidate) throws GvmClientException {
+    public Version getDefaultVersionFor(String candidate) throws GvmClientException {
         String defaultVersion = getText("/candidates/" + candidate + "/default");
         return new Version(defaultVersion);
     }
 
-    Version getAppVersion() throws GvmClientException {
+    public Version getAppVersion() throws GvmClientException {
         String defaultVersion = getText("/app/version");
         return new Version(defaultVersion);
     }
 
-    URL getDownloadURL(String candidate, String version) throws GvmClientException {
+    public URL getDownloadURL(String candidate, String version) throws GvmClientException {
         HTTPResponse response = get("/candidates/" + candidate + "/" + version + "/download").getResponse();
         String location = response.getHeaders().get("Location").toString();
         try {
