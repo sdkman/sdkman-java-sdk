@@ -63,7 +63,7 @@ class GvmClientIntegrationSpec extends Specification {
         def defaultVersion = gvmClient.getDefaultVersionFor(candidate)
 
         then:
-        defaultVersion.name == "0.6"
+        defaultVersion.name == "0.7"
     }
 
     void "should validate a valid candidate version"() {
@@ -95,7 +95,7 @@ class GvmClientIntegrationSpec extends Specification {
         def defaultVersion = gvmClient.getAppVersion()
 
         then:
-        defaultVersion.name ==~ /^1\.0\.0\+build-\d{3}$/
+        defaultVersion.name ==~ /^1\.0\.0\-build-\d{3}$/
     }
 
     void "should retrieve download url for a candidate version"() {

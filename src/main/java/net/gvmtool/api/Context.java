@@ -1,5 +1,7 @@
 package net.gvmtool.api;
 
+import net.gvmtool.client.GvmClient;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +13,7 @@ import java.nio.file.Paths;
 public class Context {
 
     public Path gvmHomeDir;
-//    public GvmClient client;
+    public GvmClient client;
 
     public static Context get() {
         Context context = new Context();
