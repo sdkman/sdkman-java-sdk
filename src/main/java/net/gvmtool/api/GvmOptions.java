@@ -26,7 +26,7 @@ public class GvmOptions {
 
     private final Set<GvmOption> options;
 
-    public GvmOptions(GvmOption[] gvmOptions) {
+    public GvmOptions(GvmOption...gvmOptions) {
         options = new HashSet<>();
         Collections.addAll(options, gvmOptions);
     }
