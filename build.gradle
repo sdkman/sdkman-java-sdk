@@ -29,17 +29,22 @@ buildscript {
 
 apply plugin: 'idea'
 apply plugin: 'groovy'
+apply plugin: 'java'
 apply from: 'gradle/publishing.gradle'
 apply from: 'gradle/code-coverage.gradle'
 apply from: 'gradle/code-quality.gradle'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile "org.codehaus.groovy:groovy-all:2.2.2"
     compile "com.github.groovy-wslite:groovy-wslite:0.8.0"
+    compile "org.apache.commons:commons-lang3:3.3.2"
+    testCompile "org.codehaus.groovy:groovy-all:2.2.2"
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
     testCompile "cglib:cglib-nodep:3.1"
     testCompile "org.objenesis:objenesis:2.1"

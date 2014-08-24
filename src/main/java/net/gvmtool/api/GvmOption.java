@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.gvmtool.client
+package net.gvmtool.api;
 
-class GvmClientException extends Throwable {
-    GvmClientException(String message){
-        super(message)
-    }
+/**
+ * @author Noam Y. Tenne
+ */
+public enum GvmOption {
 
-    GvmClientException(Throwable e){
-        super(e)
-    }
-
-    GvmClientException(String message, Throwable e) {
-        super(message, e)
-    }
+    INSTALL, DEFAULT, OFFLINE
 }

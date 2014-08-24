@@ -13,8 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.gvmtool.client
+package net.gvmtool.api;
 
-class Candidate {
-    String name
+import java.nio.file.Path;
+
+/**
+ * @author Noam Y. Tenne
+ */
+public class CandidateVersion {
+
+    private Path candidateVersionDir;
+
+    public CandidateVersion(Path candidateVersionDir) {
+        this.candidateVersionDir = candidateVersionDir;
+    }
+
+    public Path dir() {
+        return candidateVersionDir;
+    }
+
+    public String name() {
+        return candidateVersionDir.getFileName().toString();
+    }
 }

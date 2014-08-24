@@ -37,7 +37,7 @@ class GvmClientSpec extends Specification {
         def alive = gvmClient.isAlive()
 
         then:
-        1 * mockResponse.propertyMissing('text') >> "OK"
+        1 * mockResponse.getData() >> "OK".bytes
         1 * mockRestClient.get({it.path == '/alive'}) >> mockResponse
 
         and:
@@ -60,7 +60,7 @@ class GvmClientSpec extends Specification {
         List<Candidate> results = gvmClient.getCandidates()
 
         then:
-        1 * mockResponse.propertyMissing('text') >> "grails,groovy"
+        1 * mockResponse.getData() >> "grails,groovy".bytes
         1 * mockRestClient.get({it.path == '/candidates'}) >> mockResponse
 
         and:
@@ -87,7 +87,7 @@ class GvmClientSpec extends Specification {
         List<Version> versions = gvmClient.getVersionsFor(candidate)
 
         then:
-        1 * mockResponse.propertyMissing('text') >> "2.1.9,2.2.1"
+        1 * mockResponse.getData() >> "2.1.9,2.2.1".bytes
         1 * mockRestClient.get({it.path == "/candidates/$candidate"}) >> mockResponse
 
         versions.find { it.name == "2.2.1" }
@@ -116,7 +116,7 @@ class GvmClientSpec extends Specification {
         def defaultVersion = gvmClient.getDefaultVersionFor(candidate)
 
         then:
-        1 * mockResponse.propertyMissing('text') >> '0.6'
+        1 * mockResponse.getData() >> '0.6'.bytes
         1 * mockRestClient.get({it.path == "/candidates/$candidate/default"}) >> mockResponse
 
         and:
@@ -146,7 +146,7 @@ class GvmClientSpec extends Specification {
         def valid = gvmClient.validCandidateVersion(candidate, version)
 
         then:
-        1 * mockResponse.propertyMissing('text') >> 'valid'
+        1 * mockResponse.getData() >> 'valid'.bytes
         1 * mockRestClient.get({it.path == "/candidates/$candidate/$version"}) >> mockResponse
 
         and:
@@ -162,7 +162,7 @@ class GvmClientSpec extends Specification {
         def valid = gvmClient.validCandidateVersion(candidate, version)
 
         then:
-        1 * mockResponse.propertyMissing('text') >> 'invalid'
+        1 * mockResponse.getData() >> 'invalid'.bytes
         1 * mockRestClient.get({it.path == "/candidates/$candidate/$version"}) >> mockResponse
 
         and:
@@ -188,7 +188,7 @@ class GvmClientSpec extends Specification {
         def defaultVersion = gvmClient.getAppVersion()
 
         then:
-        1 * mockResponse.propertyMissing('text') >> version
+        1 * mockResponse.getData() >> version.bytes
         1 * mockRestClient.get({it.path == '/app/version'}) >> mockResponse
 
         and:

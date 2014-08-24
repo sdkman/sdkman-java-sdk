@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.gvmtool.client
+package net.gvmtool.client;
 
-class Version {
-    String name
+/**
+ * @author Noam Y. Tenne
+ */
+public class Version {
+
+    private String name;
+
+    public Version(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
